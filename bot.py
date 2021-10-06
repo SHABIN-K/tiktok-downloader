@@ -4,6 +4,9 @@ from typing import Tuple
 from pyrogram import Client, filters
 from pyrogram.types import User, Message
 from configs import Config
+from pyrogram.errors import UserNotParticipant
+from pyrogram.errors import UserBannedInChannel
+from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
 from core.forcesub import ForceSub
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
@@ -14,6 +17,12 @@ BOT_TOKEN = os.environ['BOT_TOKEN']
 downloads = './downloads/{}/'
 
 #DL_BUTTONS
+
+FORCE_BUTTON = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('JOIN HERE 🔖', url=f"https://t.me/{Config.UPDATES_CHANNEL}")
+        ]]
+    )        
 
 START_BUTTONS = InlineKeyboardMarkup(
         [[
@@ -53,6 +62,8 @@ ABOUT_TEXT = """**ABOUT ME**
  **Libary :** [pyrogram](https://github.com/pyrogram/pyrogram)
  **Channel:** [Code 𝕏 Botz](https://t.me/CodeXBotz)
  **Support:** [Code 𝕏 Botz Support](https://t.me/CodeXBotzSupport)
+"""
+FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please join channel and enjoy bot\n\n**Press the Following Button to join Now 👇**
 """
 USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
 WAIT_MSG = "<b>Processing ...</b>"
@@ -106,12 +117,35 @@ async def help_handler(bot, message):
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
+ 
+    if Config.UPDATES_CHANNEL != "None":
+        try:
+            user = await bot.get_chat_member(Config.UPDATES_CHANNEL, update.chat.id)
+            if user.status == "kicked":
+                await bot.send_message(
+                    chat_id=update.chat.id,
+                    text="you are banned\n\n  **contact @codexbotzsupport **",
+                    parse_mode="markdown",
+                    disable_web_page_preview=True
+                )
+                return
+        except UserNotParticipant:
+            await bot.send_message(
+                chat_id=update.chat.id,
+                text=FORCE_TEXT,
+                reply_markup=FORCE_BUTTON,
+                parse_mode="markdown")
+            return
+        except Exception:
+            await bot.send_message(
+                chat_id=update.chat.id,
+                text="**Sᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ Wʀᴏɴɢ. Cᴏɴᴛᴀᴄᴛ** @codexbotzsupport",
+                parse_mode="markdown",
+                disable_web_page_preview=True)
+            return
   url = update.text
   session = requests.Session()
   resp = session.head(url, allow_redirects=True)
-  FSub = await ForceSub(bot, event)
-  if FSub == 400:
-        return
   if not 'tiktok.com' in resp.url:
     return
   await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
