@@ -3,7 +3,7 @@ import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
 from pyrogram.types import User, Message
-from vars import Configs
+from configs import Config
 from core.forcesub import ForceSub
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
