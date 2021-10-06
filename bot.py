@@ -83,9 +83,6 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
 # Start
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
-  FSub = await ForceSub(bot, event)
-    if FSub == 400:
-        return
     await update.reply_text(
         text=START_TEXT,
         parse_mode="markdown",
@@ -119,7 +116,7 @@ async def _tiktok(bot, update):
   session = requests.Session()
   resp = session.head(url, allow_redirects=True)
   FSub = await ForceSub(bot, event)
-    if FSub == 400:
+  if FSub == 400:
         return
   if not 'tiktok.com' in resp.url:
     return
