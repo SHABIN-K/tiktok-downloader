@@ -114,12 +114,12 @@ async def help_handler(bot, message):
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
-  FSub = await ForceSub(bot, event)
-    if FSub == 400:
-        return
   url = update.text
   session = requests.Session()
   resp = session.head(url, allow_redirects=True)
+  FSub = await ForceSub(bot, event)
+    if FSub == 400:
+        return
   if not 'tiktok.com' in resp.url:
     return
   await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
