@@ -1,5 +1,5 @@
 import asyncio
-from configs import Config
+from vars import Configs
 from pyrogram import Client
 from pyrogram.errors import FloodWait, UserNotParticipant
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
@@ -8,7 +8,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 async def ForceSub(bot: Client, event: Message):
 
     try:
-        invite_link = await bot.create_chat_invite_link(chat_id=(int(Config.UPDATES_CHANNEL) if Config.UPDATES_CHANNEL.startswith("-100") else Config.UPDATES_CHANNEL))
+        invite_link = await bot.create_chat_invite_link(chat_id=(int(Configs.UPDATES_CHANNEL) if Configs.UPDATES_CHANNEL.startswith("-100") else Configs.UPDATES_CHANNEL))
     except FloodWait as e:
         await asyncio.sleep(e.x)
         fix_ = await ForceSub(bot, event)
@@ -17,7 +17,7 @@ async def ForceSub(bot: Client, event: Message):
         print(f"Unable to do Force Subscribe to codexbotz\n\nError: {err}")
         return 200
     try:
-        user = await bot.get_chat_member(chat_id=(int(Config.UPDATES_CHANNEL) if Config.UPDATES_CHANNEL.startswith("-100") else Config.UPDATES_CHANNEL), user_id=event.from_user.id)
+        user = await bot.get_chat_member(chat_id=(int(Configs.UPDATES_CHANNEL) if Configs.UPDATES_CHANNEL.startswith("-100") else Configs.UPDATES_CHANNEL), user_id=event.from_user.id)
         if user.status == "kicked":
             await bot.send_message(
                 chat_id=event.from_user.id,
@@ -32,7 +32,7 @@ async def ForceSub(bot: Client, event: Message):
     except UserNotParticipant:
         await bot.send_message(
             chat_id=event.from_user.id,
-            text="You need to join @CodeXBotz in order to use this bot. Being a part of the this channel make you are aware of the latest updates\n_So please join channel and enjoy bot_\n\n**Press the Following Button to join Now 👇**",
+            text="You need to join @CodeXBotz in order to use this bot.\n**Press the Following Button to join Now 👇**",
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
