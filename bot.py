@@ -20,7 +20,7 @@ downloads = './downloads/{}/'
 
 FORCE_BUTTON = InlineKeyboardMarkup(
         [[
-        InlineKeyboardButton('JOIN HERE 🔖', url=f"https://t.me/{Config.UPDATES_CHANNEL}")
+        InlineKeyboardButton('JOIN HERE 🔖', url=f"https://t.me/codexbotz")
         ]]
     )        
 
