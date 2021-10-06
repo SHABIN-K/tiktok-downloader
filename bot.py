@@ -117,7 +117,10 @@ async def help_handler(bot, message):
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
- 
+  url = update.text
+  session = requests.Session()
+  resp = session.head(url, allow_redirects=True)
+  
     if Config.UPDATES_CHANNEL != "None":
         try:
             user = await bot.get_chat_member(Config.UPDATES_CHANNEL, update.chat.id)
@@ -143,9 +146,6 @@ async def _tiktok(bot, update):
                 parse_mode="markdown",
                 disable_web_page_preview=True)
             return
-  url = update.text
-  session = requests.Session()
-  resp = session.head(url, allow_redirects=True)
   if not 'tiktok.com' in resp.url:
     return
   await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
