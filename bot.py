@@ -1,6 +1,11 @@
+import pyrogram
 import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
+from pyrogram.types import User, Message
+from pyrogram.errors import UserNotParticipant
+from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
+import vars import Config
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 # Configs
@@ -10,6 +15,12 @@ BOT_TOKEN = os.environ['BOT_TOKEN']
 downloads = './downloads/{}/'
 
 #DL_BUTTONS
+
+FORCE_BUTTON = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('Code 𝕏 Botz', url=f"https://t.me/{Configs.UPDATE_CHANNEL}")
+        ]]
+    )
 
 START_BUTTONS = InlineKeyboardMarkup(
         [[
@@ -102,6 +113,18 @@ async def help_handler(bot, message):
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
+  try:
+      user = await idbot.get_chat_member(update_channel, msg.chat.id)
+            if user.status == "kicked out":
+               await msg.reply_text("😔 Sorry Dude, You are 🅱︎🅰︎🅽︎🅽︎🅴︎🅳︎ 😜")
+               return
+        except UserNotParticipant:
+            await msg.reply_text(text="<b>📢 JOIN MY UPDATE CHANNEL 📢</b>",
+            reply_markup=InlineKeyboardMarkup(FORCE_BUTTON)
+            return
+        except Exception:
+            await msg.reply_text(f"something went wrong")
+            return
   url = update.text
   session = requests.Session()
   resp = session.head(url, allow_redirects=True)
