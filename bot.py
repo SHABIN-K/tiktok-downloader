@@ -15,12 +15,6 @@ downloads = './downloads/{}/'
 
 #DL_BUTTONS
 
-FORCE_BUTTON = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('Code 𝕏 Botz', url=f"https://t.me/{Configs.UPDATE_CHANNEL}")
-        ]]
-    )
-
 START_BUTTONS = InlineKeyboardMarkup(
         [[
         InlineKeyboardButton('🤔Hᴇʟᴘ', callback_data='help'),
