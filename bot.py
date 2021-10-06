@@ -5,7 +5,8 @@ from pyrogram import Client, filters
 from pyrogram.types import User, Message
 from pyrogram.errors import UserNotParticipant
 from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
-from vars import Config
+from vars import Configs
+from core.forcesub import ForceSub
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 # Configs
@@ -113,18 +114,9 @@ async def help_handler(bot, message):
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
-  try:
-      user = await idbot.get_chat_member(update_channel, msg.chat.id)
-            if user.status == "kicked":
-               await msg.reply_text("😔 Sorry Dude, You are 🅱︎🅰︎🅽︎🅽︎🅴︎🅳︎ 😜")
-               return
-        except UserNotParticipant:
-            await msg.reply_text(text="<b>📢 JOIN MY UPDATE CHANNEL 📢</b>",
-            reply_markup=InlineKeyboardMarkup(FORCE_BUTTON)
-            return
-        except Exception:
-            await msg.reply_text(f"something went wrong")
-            return
+  FSub = await ForceSub(bot, event)
+    if FSub == 400:
+        return
   url = update.text
   session = requests.Session()
   resp = session.head(url, allow_redirects=True)
