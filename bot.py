@@ -5,7 +5,7 @@ from pyrogram import Client, filters
 from pyrogram.types import User, Message
 from pyrogram.errors import UserNotParticipant
 from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
-import vars import Config
+from vars import Config
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 # Configs
