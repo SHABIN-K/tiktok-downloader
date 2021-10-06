@@ -3,8 +3,6 @@ import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
 from pyrogram.types import User, Message
-from pyrogram.errors import UserNotParticipant
-from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
 from vars import Configs
 from core.forcesub import ForceSub
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
@@ -85,6 +83,9 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
 # Start
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
+  FSub = await ForceSub(bot, event)
+    if FSub == 400:
+        return
     await update.reply_text(
         text=START_TEXT,
         parse_mode="markdown",
