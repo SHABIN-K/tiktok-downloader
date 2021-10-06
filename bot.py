@@ -115,7 +115,7 @@ async def help_handler(bot, message):
 async def _tiktok(bot, update):
   try:
       user = await idbot.get_chat_member(update_channel, msg.chat.id)
-            if user.status == "kicked out":
+            if user.status == "kicked":
                await msg.reply_text("😔 Sorry Dude, You are 🅱︎🅰︎🅽︎🅽︎🅴︎🅳︎ 😜")
                return
         except UserNotParticipant:
