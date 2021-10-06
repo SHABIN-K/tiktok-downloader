@@ -114,7 +114,7 @@ async def help_handler(bot, message):
         reply_markup=HELP_BUTTONS
     )
 
-# Downloader for tiktok
+
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
     if Config.UPDATES_CHANNEL != "None":
@@ -181,9 +181,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
     if '?' in resp.url:
-        tt = resp.url.split('?', 1)[0]
+      tt = resp.url.split('?', 1)[0]
     else:
-        tt = resp.url
+      tt = resp.url
     ttid = dirs+tt.split('/')[-1]
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
@@ -194,7 +194,6 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     await bot.send_video(update.chat.id, f'{ttid}.mp4',)
     shutil.rmtree(dirs)
-    
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
     os.makedirs(dirs)
@@ -205,9 +204,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
     if '?' in resp.url:
-        tt = resp.url.split('?', 1)[0]
+      tt = resp.url.split('?', 1)[0]
     else:
-        tt = resp.url
+      tt = resp.url
     ttid = dirs+tt.split('/')[-1]
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
