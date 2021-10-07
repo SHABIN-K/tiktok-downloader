@@ -1,13 +1,6 @@
-import pyrogram
 import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
-from pyrogram.types import User, Message
-from configs import Config
-from pyrogram.errors import UserNotParticipant
-from pyrogram.errors import UserBannedInChannel
-from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
-from core.forcesub import ForceSub
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 # Configs
@@ -16,8 +9,7 @@ APP_ID = int(os.environ['APP_ID'])
 BOT_TOKEN = os.environ['BOT_TOKEN']
 downloads = './downloads/{}/'
 
-#DL_BUTTONS
-
+#Button
 FORCE_BUTTON = InlineKeyboardMarkup(
         [[
         InlineKeyboardButton('JOIN HERE 🔖', url=f"https://t.me/codexbotz")
@@ -68,6 +60,7 @@ FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please 
 USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
 WAIT_MSG = "<b>Processing ...</b>"
 REPLY_ERROR = "<code>Use this command as a replay to any telegram message with out any spaces.</code>"
+
 
 # Running bot
 bot = Client('TikTokDL', api_id=APP_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -122,9 +115,9 @@ async def _tiktok(bot, update):
   resp = session.head(url, allow_redirects=True)
   if not 'tiktok.com' in resp.url:
     return
-  await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+  await update.reply('**choose your options**', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
-# _callbacks
+# കാൾബാക്സ്
 
 @bot.on_callback_query()
 async def cb_data(bot, update):
@@ -142,6 +135,7 @@ async def cb_data(bot, update):
         )
     else:
         await update.message.delete()
+
 
 @bot.on_callback_query()
 async def _callbacks(bot, cb: CallbackQuery):
