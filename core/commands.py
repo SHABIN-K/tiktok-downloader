@@ -11,11 +11,8 @@ USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
 WAIT_MSG = "<b>Processing ...</b>"
 REPLY_ERROR = "<code>Use this command as a replay to any telegram message with out any spaces.</code>"
 
-@Bot.on_message(filters.private & filters.command('users'))
+@Bot.on_message(filters.private & filters.command('us'))
 async def subscribers_count(bot, m: Message):
-    id = m.from_user.id
-    if id not in AUTH_USERS:
-        return
     msg = await m.reply_text(WAIT_MSG)
     messages = await users_info(bot)
     active = messages[0]
@@ -24,7 +21,7 @@ async def subscribers_count(bot, m: Message):
     await msg.edit(USERS_LIST.format(active, blocked))
 
 
-@Bot.on_message(filters.private & filters.command('broadcast') & filters.user(AUTH_USERS))
+@Bot.on_message(filters.private & filters.command('cast'))
 async def send_text(client: Bot, message: Message):
     if message.reply_to_message:
         query = await query_msg()
