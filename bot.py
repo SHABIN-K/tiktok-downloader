@@ -51,11 +51,13 @@ DL_BUTTONS=[
     ],
 ]
 
-START_TEXT = """Hi {},
-I Am A Powerfull
+START_TEXT = """Hi, {}
+I am a TikTok Downloader bot.
+you can download tiktok videos without watermark and audios.
 """
 
-HELP_TEXT = """helo"""
+HELP_TEXT = """**❔ How to use this Bot** 🔷 Just send me url of a post and i will download and send the file of it
+"""
 
 ABOUT_TEXT = """**ABOUT ME**
  **Language:** [Python 3](https://www.python.org/)
@@ -89,7 +91,7 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
     await update.reply_text(
-        text=START_TEXT,
+        text=START_TEXT.format(update.from_user.mention),
         parse_mode="markdown",
         disable_web_page_preview=True,
         reply_markup=START_BUTTONS
@@ -148,9 +150,25 @@ async def _tiktok(bot, update):
     resp = session.head(url, allow_redirects=True)
     if not 'tiktok.com' in resp.url:
         return
-    await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+    await update.reply('**choose your options**', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
+@bot.on_callback_query()
+async def cb_data(bot, cb: CallbackQuery):
+    if update.data == "help":
+        await update.message.edit_text(
+            text=HELP_TEXT,
+            disable_web_page_preview=True,
+            reply_markup=HELP_BUTTONS
+        )
+    elif update.data == "about":
+        await update.message.edit_text(
+            text=ABOUT_TEXT,
+            disable_web_page_preview=True,
+            reply_markup=ABOUT_BUTTONS
+        )
+    else:
+        await update.message.delete()
 
 @bot.on_callback_query()
 async def _callbacks(bot, cb: CallbackQuery):
@@ -177,7 +195,6 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     await bot.send_video(update.chat.id, f'{ttid}.mp4',)
     shutil.rmtree(dirs)
-    
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
     os.makedirs(dirs)
