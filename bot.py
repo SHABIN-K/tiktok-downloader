@@ -7,7 +7,8 @@ from configs import Config
 from pyrogram.errors import UserNotParticipant
 from pyrogram.errors import UserBannedInChannel
 from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
-from core.forcesub import ForceSub
+from core.forcesub import forcesub
+from database.sql import add_user
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 # Configs
