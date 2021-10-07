@@ -88,6 +88,7 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
       process.returncode,
       process.pid,
   )
+  
 @bot.on_message(filters.private & filters.command(["us"]))
 async def subscribers_count(bot, m: Message):
     msg = await m.reply_text(WAIT_MSG)
@@ -99,17 +100,17 @@ async def subscribers_count(bot, m: Message):
 
 
 @bot.on_message(filters.private & filters.command(["cast"]))
-async def send_text(client: Bot, message: Message):
-    if message.reply_to_message:
+async def send_text(bot, update):
+    if update.reply_to_message:
         query = await query_msg()
-        broadcast_msg = message.reply_to_message
+        broadcast_msg = update.reply_to_message
         total = 0
         successful = 0
         blocked = 0
         deleted = 0
         unsuccessful = 0
         
-        pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
+        pls_wait = await update.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
         for row in query:
             chat_id = int(row[0])
             try:
@@ -138,7 +139,7 @@ Unsuccessful: <code>{unsuccessful}</code></b>"""
         return await pls_wait.edit(status)
 
     else:
-        msg = await message.reply(REPLY_ERROR)
+        msg = await update.reply(REPLY_ERROR)
         await asyncio.sleep(8)
         await msg.delete()
 
