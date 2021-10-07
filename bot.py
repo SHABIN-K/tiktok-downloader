@@ -10,61 +10,29 @@ BOT_TOKEN = os.environ['BOT_TOKEN']
 downloads = './downloads/{}/'
 
 #Button
-FORCE_BUTTON = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('JOIN HERE 🔖', url=f"https://t.me/codexbotz")
-        ]]
-    )        
-
-START_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('🤔Hᴇʟᴘ', callback_data='help'),
-        InlineKeyboardButton('🤖Aʙᴏᴜᴛ', callback_data='about')],
-        [InlineKeyboardButton('🔒Cʟᴏsᴇ', callback_data='close')
-        ]]
-    )
-HELP_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('🤖Aʙᴏᴜᴛ', callback_data='about'),
-        InlineKeyboardButton('🔒Cʟᴏsᴇ', callback_data='close')
-        ]]
-    )
-ABOUT_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('🤔Hᴇʟᴘ', callback_data='help'),
-        InlineKeyboardButton('🔒Cʟᴏsᴇ', callback_data='close')
-        ]]
-    )
-    
-DL_BUTTONS=[
+START_BUTTONS=[
     [
-        InlineKeyboardButton('video 📹', callback_data='nowm'),
-        InlineKeyboardButton('Audio🎶', callback_data='audio'),
+        InlineKeyboardButton('Source', url='https://github.com/X-Gorn/TikTokDL'),
+        InlineKeyboardButton('Project Channel', url='https://t.me/xTeamBots'),
     ],
+    [InlineKeyboardButton('Author', url='https://t.me/xgorn')],
 ]
 
-START_TEXT = """Hi {},
-I Am A Powerfull
-"""
-
-HELP_TEXT = """helo"""
-
-ABOUT_TEXT = """**ABOUT ME**
- **Language:** [Python 3](https://www.python.org/)
- **Libary :** [pyrogram](https://github.com/pyrogram/pyrogram)
- **Channel:** [Code 𝕏 Botz](https://t.me/CodeXBotz)
- **Support:** [Code 𝕏 Botz Support](https://t.me/CodeXBotzSupport)
-"""
-FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please join channel and enjoy bot\n\n**Press the Following Button to join Now 👇**
-"""
-USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
-WAIT_MSG = "<b>Processing ...</b>"
-REPLY_ERROR = "<code>Use this command as a replay to any telegram message with out any spaces.</code>"
+DL_BUTTONS=[
+    [
+        InlineKeyboardButton('No Watermark', callback_data='nowm'),
+        InlineKeyboardButton('Watermark', callback_data='wm'),
+    ],
+    [InlineKeyboardButton('Audio', callback_data='audio')],
+]
 
 
 # Running bot
-bot = Client('TikTokDL', api_id=APP_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+xbot = Client('TikTokDL', api_id=APP_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+
+# Helpers
+# Thanks to FridayUB
 async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
   args = shlex.split(cmd)
   process = await asyncio.create_subprocess_exec(
@@ -79,65 +47,22 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
   )
 
 # Start
-@bot.on_message(filters.private & filters.command(["start"]))
+@xbot.on_message(filters.command('start') & filters.private)
 async def _start(bot, update):
-    await update.reply_text(
-        text=START_TEXT,
-        parse_mode="markdown",
-        disable_web_page_preview=True,
-        reply_markup=START_BUTTONS
-    )  
-
-@bot.on_message(filters.private & filters.command(["about"]))
-async def about_handler(bot, message):
-    await message.reply_text(
-        text=ABOUT_TEXT,
-        parse_mode="markdown",
-        disable_web_page_preview=True,
-        reply_markup=ABOUT_BUTTONS
-    )
-
-
-@bot.on_message(filters.command('help') & filters.private & ~filters.edited)
-async def help_handler(bot, message):
-    await message.reply_text(
-        text=HELP_TEXT,
-        parse_mode="markdown",
-        disable_web_page_preview=True,
-        reply_markup=HELP_BUTTONS
-    )
+  await update.reply_text(f"I'm TikTokDL!\nYou can download tiktok video/audio using this bot", True, reply_markup=InlineKeyboardMarkup(START_BUTTONS))
 
 # Downloader for tiktok
-@bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
+@xbot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
   url = update.text
   session = requests.Session()
   resp = session.head(url, allow_redirects=True)
   if not 'tiktok.com' in resp.url:
     return
-  await update.reply('**choose your options**', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+  await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
-# കാൾബാക്സ്
-
-@bot.on_callback_query()
-async def cb_data(bot, update):
-    if update.data == "help":
-        await update.message.edit_text(
-            text=HELP_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=HELP_BUTTONS
-        )
-    elif update.data == "about":
-        await update.message.edit_text(
-            text=ABOUT_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=ABOUT_BUTTONS
-        )
-    else:
-        await update.message.delete()
-
-
-@bot.on_callback_query()
+# Callbacks
+@xbot.on_callback_query()
 async def _callbacks(bot, cb: CallbackQuery):
   if cb.data == 'nowm':
     dirs = downloads.format(uuid.uuid4().hex)
@@ -211,4 +136,4 @@ async def _callbacks(bot, cb: CallbackQuery):
     await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
     shutil.rmtree(dirs)
 
-bot.run()
+xbot.run()
