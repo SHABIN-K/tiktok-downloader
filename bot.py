@@ -1,6 +1,13 @@
+import pyrogram
 import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
+from pyrogram.types import User, Message
+from configs import Config
+from pyrogram.errors import UserNotParticipant
+from pyrogram.errors import UserBannedInChannel
+from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
+from core.forcesub import ForceSub
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 
 # Configs
@@ -10,6 +17,12 @@ BOT_TOKEN = os.environ['BOT_TOKEN']
 downloads = './downloads/{}/'
 
 #DL_BUTTONS
+
+FORCE_BUTTON = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('JOIN HERE 🔖', url=f"https://t.me/codexbotz")
+        ]]
+    )        
 
 START_BUTTONS = InlineKeyboardMarkup(
         [[
@@ -49,6 +62,8 @@ ABOUT_TEXT = """**ABOUT ME**
  **Libary :** [pyrogram](https://github.com/pyrogram/pyrogram)
  **Channel:** [Code 𝕏 Botz](https://t.me/CodeXBotz)
  **Support:** [Code 𝕏 Botz Support](https://t.me/CodeXBotzSupport)
+"""
+FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please join channel and enjoy bot\n\n**Press the Following Button to join Now 👇**
 """
 USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
 WAIT_MSG = "<b>Processing ...</b>"
@@ -97,36 +112,45 @@ async def help_handler(bot, message):
         parse_mode="markdown",
         disable_web_page_preview=True,
         reply_markup=HELP_BUTTONS
-        )
+    )
 
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
-  url = update.text
-  session = requests.Session()
-  resp = session.head(url, allow_redirects=True)
-  if not 'tiktok.com' in resp.url:
-    return
-  await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+    if Config.UPDATES_CHANNEL != "None":
+        try:
+            user = await bot.get_chat_member(Config.UPDATES_CHANNEL, update.chat.id)
+            if user.status == "kicked":
+                return await bot.send_message(
+                    chat_id=update.chat.id,
+                    text="you are banned\n\n  **contact @codexbotzsupport **",
+                    parse_mode="markdown",
+                    disable_web_page_preview=True
+                )
+                
+        except UserNotParticipant:
+            return await bot.send_message(
+                chat_id=update.chat.id,
+                text=FORCE_TEXT,
+                reply_markup=FORCE_BUTTON,
+                parse_mode="markdown")
+         
+        except Exception:
+            return await bot.send_message(
+                chat_id=update.chat.id,
+                text="**Sᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ Wʀᴏɴɢ. Cᴏɴᴛᴀᴄᴛ** @codexbotzsupport",
+                parse_mode="markdown",
+                disable_web_page_preview=True
+            )
+
+    url = update.text
+    session = requests.Session()
+    resp = session.head(url, allow_redirects=True)
+    if not 'tiktok.com' in resp.url:
+        return
+    await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
-
-@bot.on_callback_query()
-async def cb_data(bot, update):
-    if update.data == "help":
-        await update.message.edit_text(
-            text=HELP_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=HELP_BUTTONS
-        )
-    elif update.data == "about":
-        await update.message.edit_text(
-            text=ABOUT_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=ABOUT_BUTTONS
-        )
-    else:
-        await update.message.delete()
 
 @bot.on_callback_query()
 async def _callbacks(bot, cb: CallbackQuery):
@@ -140,9 +164,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
     if '?' in resp.url:
-      tt = resp.url.split('?', 1)[0]
+        tt = resp.url.split('?', 1)[0]
     else:
-      tt = resp.url
+        tt = resp.url
     ttid = dirs+tt.split('/')[-1]
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
@@ -153,6 +177,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     await bot.send_video(update.chat.id, f'{ttid}.mp4',)
     shutil.rmtree(dirs)
+    
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
     os.makedirs(dirs)
@@ -163,9 +188,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
     if '?' in resp.url:
-      tt = resp.url.split('?', 1)[0]
+        tt = resp.url.split('?', 1)[0]
     else:
-      tt = resp.url
+        tt = resp.url
     ttid = dirs+tt.split('/')[-1]
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
