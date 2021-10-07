@@ -53,12 +53,14 @@ DL_BUTTONS=[
     ],
 ]
 
-START_TEXT = """<b>Hi, {}</b>
+START_TEXT = """<b>Hi, {}</b>\n
 <b>I am a TikTok Downloader bot.</b>
 <b>you can download tiktok videos without watermark and audios.</b>
 """
 
-HELP_TEXT = """**❔ How to use this Bot** 🔷 Just send me url of a post and i will download and send the file of it
+HELP_TEXT = """**❔ How to use this Bot**
+
+🔷 Just send me url of a post and i will download and send the file of it
 """
 
 ABOUT_TEXT = """**ABOUT ME**
@@ -99,7 +101,7 @@ async def subscribers_count(bot, m: Message):
     await msg.edit(USERS_LIST.format(active, blocked))
 
 
-@bot.on_message(filters.private & filters.command(["cast"]))
+@bot.on_message(filters.private & filters.command(["xat"]))
 async def send_text(bot, update):
     if update.reply_to_message:
         query = await query_msg()
@@ -165,7 +167,14 @@ async def about_handler(bot, message):
         reply_markup=ABOUT_BUTTONS
     )
 
-
+@bot.on_message(filters.private & filters.command(["xdevs"]))
+async def about_handler(bot, message):
+    await message.reply_text(
+        text="broadcast = /xat\nusers = /us",
+        parse_mode="markdown",
+        disable_web_page_preview=True
+    )
+    
 @bot.on_message(filters.command('help') & filters.private & ~filters.edited)
 async def help_handler(bot, message):
     await message.reply_text(
@@ -263,9 +272,17 @@ async def _callbacks(bot, cb: CallbackQuery):
     await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
     shutil.rmtree(dirs)
   elif cb.data == "help":
-    await bot.message.edit_text(text=HELP_TEXT,disable_web_page_preview=True,reply_markup=HELP_BUTTONS)
+    await bot.message.edit_text(
+      text=HELP_TEXT,
+      disable_web_page_preview=True,
+      reply_markup=HELP_BUTTONS
+      )
   elif cb.data == "about":
-    await bot.message.edit_text(text=ABOUT_TEXT,disable_web_page_preview=True,reply_markup=ABOUT_BUTTONS)
+    await bot.message.edit_text(
+      text=ABOUT_TEXT,
+      disable_web_page_preview=True,
+      reply_markup=ABOUT_BUTTONS
+      )
     
 bot.run()
     
