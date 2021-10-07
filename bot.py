@@ -88,8 +88,8 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
 # Start
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
-    id = m.from_user.id
-    user_name = '@' + m.from_user.username if m.from_user.username else None
+    id = update.from_user.id
+    user_name = '@' + update.from_user.username if update.from_user.username else None
     await add_user(id, user_name)
     await update.reply_text(
         text=START_TEXT.format(update.from_user.mention),
