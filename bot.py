@@ -51,15 +51,16 @@ DL_BUTTONS=[
     ],
 ]
 
-START_TEXT = """Hi, {}
-I am a TikTok Downloader bot.
-you can download tiktok videos without watermark and audios.
+START_TEXT = """<b>Hi, {}</b>
+<b>I am a TikTok Downloader bot.</b>
+<b>you can download tiktok videos without watermark and audios.</b>
 """
 
 HELP_TEXT = """**❔ How to use this Bot** 🔷 Just send me url of a post and i will download and send the file of it
 """
 
 ABOUT_TEXT = """**ABOUT ME**
+
  **Language:** [Python 3](https://www.python.org/)
  **Libary :** [pyrogram](https://github.com/pyrogram/pyrogram)
  **Channel:** [Code 𝕏 Botz](https://t.me/CodeXBotz)
@@ -67,9 +68,6 @@ ABOUT_TEXT = """**ABOUT ME**
 """
 FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please join channel and enjoy bot\n\n**Press the Following Button to join Now 👇**
 """
-USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
-WAIT_MSG = "<b>Processing ...</b>"
-REPLY_ERROR = "<code>Use this command as a replay to any telegram message with out any spaces.</code>"
 
 # Running bot
 bot = Client('TikTokDL', api_id=APP_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -90,9 +88,12 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
 # Start
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
+    id = m.from_user.id
+    user_name = '@' + m.from_user.username if m.from_user.username else None
+    await add_user(id, user_name)
     await update.reply_text(
         text=START_TEXT.format(update.from_user.mention),
-        parse_mode="markdown",
+        parse_mode="html",
         disable_web_page_preview=True,
         reply_markup=START_BUTTONS
     )  
@@ -154,23 +155,6 @@ async def _tiktok(bot, update):
 
 # _callbacks
 @bot.on_callback_query()
-async def cb_data(bot, cb: CallbackQuery):
-    if update.data == "help":
-        await update.message.edit_text(
-            text=HELP_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=HELP_BUTTONS
-        )
-    elif update.data == "about":
-        await update.message.edit_text(
-            text=ABOUT_TEXT,
-            disable_web_page_preview=True,
-            reply_markup=ABOUT_BUTTONS
-        )
-    else:
-        await update.message.delete()
-
-@bot.on_callback_query()
 async def _callbacks(bot, cb: CallbackQuery):
   if cb.data == 'nowm':
     dirs = downloads.format(uuid.uuid4().hex)
@@ -220,5 +204,11 @@ async def _callbacks(bot, cb: CallbackQuery):
     await run_cmd(cmd)
     await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
     shutil.rmtree(dirs)
-
+  elif cb.data == "help":
+    await bot.message.edit_text(text=HELP_TEXT,disable_web_page_preview=True,reply_markup=HELP_BUTTONS)
+  elif cb.data == "about":
+    await bot.message.edit_text(text=ABOUT_TEXT,disable_web_page_preview=True,reply_markup=ABOUT_BUTTONS)
+    else:
+        await cb.message.delete()
 bot.run()
+    
