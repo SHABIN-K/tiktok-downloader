@@ -155,9 +155,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
     if '?' in resp.url:
-        tt = resp.url.split('?', 1)[0]
+      tt = resp.url.split('?', 1)[0]
     else:
-        tt = resp.url
+      tt = resp.url
     ttid = dirs+tt.split('/')[-1]
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
@@ -168,7 +168,29 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     await bot.send_video(update.chat.id, f'{ttid}.mp4',)
     shutil.rmtree(dirs)
-    
+  elif cb.data == 'wm':
+    dirs = downloads.format(uuid.uuid4().hex)
+    os.makedirs(dirs)
+    cbb = cb
+    update = cbb.message.reply_to_message
+    await cb.message.delete()
+    url = update.text
+    session = requests.Session()
+    resp = session.head(url, allow_redirects=True)
+    if '?' in resp.url:
+      tt = resp.url.split('?', 1)[0]
+    else:
+      tt = resp.url
+    ttid = dirs+tt.split('/')[-1]
+    r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
+    result = r.text
+    rs = json.loads(result)
+    link = rs['result']['wm']
+    resp = session.head(link, allow_redirects=True)
+    r = requests.get(resp.url, allow_redirects=True)
+    open(f'{ttid}.mp4', 'wb').write(r.content)
+    await bot.send_video(update.chat.id, f'{ttid}.mp4',)
+    shutil.rmtree(dirs)
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
     os.makedirs(dirs)
@@ -179,9 +201,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
     if '?' in resp.url:
-        tt = resp.url.split('?', 1)[0]
+      tt = resp.url.split('?', 1)[0]
     else:
-        tt = resp.url
+      tt = resp.url
     ttid = dirs+tt.split('/')[-1]
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
