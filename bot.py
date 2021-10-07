@@ -117,38 +117,12 @@ async def help_handler(bot, message):
 # Downloader for tiktok
 @bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
-    if Config.UPDATES_CHANNEL != "None":
-        try:
-            user = await bot.get_chat_member(Config.UPDATES_CHANNEL, update.chat.id)
-            if user.status == "kicked":
-                return await bot.send_message(
-                    chat_id=update.chat.id,
-                    text="you are banned\n\n  **contact @codexbotzsupport **",
-                    parse_mode="markdown",
-                    disable_web_page_preview=True
-                )
-                
-        except UserNotParticipant:
-            return await bot.send_message(
-                chat_id=update.chat.id,
-                text=FORCE_TEXT,
-                reply_markup=FORCE_BUTTON,
-                parse_mode="markdown")
-         
-        except Exception:
-            return await bot.send_message(
-                chat_id=update.chat.id,
-                text="**Sᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ Wʀᴏɴɢ. Cᴏɴᴛᴀᴄᴛ** @codexbotzsupport",
-                parse_mode="markdown",
-                disable_web_page_preview=True
-            )
-
-    url = update.text
-    session = requests.Session()
-    resp = session.head(url, allow_redirects=True)
-    if not 'tiktok.com' in resp.url:
-        return
-    await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+  url = update.text
+  session = requests.Session()
+  resp = session.head(url, allow_redirects=True)
+  if not 'tiktok.com' in resp.url:
+    return
+  await update.reply('Select the options below', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
 
