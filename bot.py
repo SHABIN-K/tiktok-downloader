@@ -208,7 +208,6 @@ async def _callbacks(bot, cb: CallbackQuery):
     await bot.message.edit_text(text=HELP_TEXT,disable_web_page_preview=True,reply_markup=HELP_BUTTONS)
   elif cb.data == "about":
     await bot.message.edit_text(text=ABOUT_TEXT,disable_web_page_preview=True,reply_markup=ABOUT_BUTTONS)
-    else:
-        await cb.message.delete()
+    
 bot.run()
     
