@@ -1,4 +1,5 @@
 import pyrogram
+import logging
 import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
@@ -237,7 +238,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.edit("pleasewait")
+    await cb.message.edit("**pleasewait...**")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
@@ -253,14 +254,18 @@ async def _callbacks(bot, cb: CallbackQuery):
     resp = session.head(link, allow_redirects=True)
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
-    await bot.send_video(update.chat.id,f'{ttid}.mp4',)
+    file = f"codexbotz{ttid}.mp4"
+    cap = "thanks"
+    await bot.send_video(update.chat.id, video=file, caption=cap reply_markup=SU_BUTTONS)
+    await cb.message.delete()
+        os.remove(file)
     shutil.rmtree(dirs)
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.delete()
+    await cb.message.edit("**pleasewait....**")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
@@ -278,7 +283,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     cmd = f'ffmpeg -i "{ttid}.mp4" -vn -ar 44100 -ac 2 -ab 192 -f mp3 "{ttid}.mp3"'
     await run_cmd(cmd)
-    await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
+    await bot.send_audio(update.chat.id, f'codexbotz{ttid}.mp3',)
     shutil.rmtree(dirs)
 bot.run()
     
