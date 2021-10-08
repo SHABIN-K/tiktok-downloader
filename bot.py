@@ -258,7 +258,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     cap = "thanks"
     await bot.send_video(update.chat.id, video=file, caption=cap, reply_markup=SU_BUTTONS)
     await cb.message.delete()
-        os.remove(file)
+    os.remove(file)
     shutil.rmtree(dirs)
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
