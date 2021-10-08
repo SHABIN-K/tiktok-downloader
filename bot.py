@@ -153,7 +153,7 @@ Unsuccessful: <code>{unsuccessful}</code></b>"""
         await asyncio.sleep(8)
         await msg.delete()
 
-# Start
+# Startn
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
     id = update.from_user.id
