@@ -254,9 +254,10 @@ async def _callbacks(bot, cb: CallbackQuery):
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
     await bot.send_video(
-      update.chat.id,
-      reply_markup = SU_BUTTONS,
-      f'{ttid}.mp4')
+      chat_id=update.chat.id,
+      f'{ttid}.mp4',
+      reply_markup =SU_BUTTONS
+      )
     shutil.rmtree(dirs)
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
