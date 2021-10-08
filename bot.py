@@ -53,6 +53,13 @@ DL_BUTTONS=[
     ],
 ]
 
+SU_BUTTONS=[
+    [
+        InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz')],
+        [InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz'),
+    ],
+]
+
 START_TEXT = """<b>Hi, {}</b>\n
 <b>I am a TikTok Downloader bot.</b>
 <b>you can download tiktok videos without watermark and audios.</b>
@@ -75,6 +82,7 @@ FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please 
 USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
 WAIT_MSG = "<b>Processing ...</b>"
 REPLY_ERROR = "<code>Use this command as a replay to any telegram message with out any spaces.</code>"
+DOWN_MSG = "**downloading... 📥**"
 # Running bot
 bot = Client('TikTokDL', api_id=APP_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
@@ -244,7 +252,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     resp = session.head(link, allow_redirects=True)
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
-    await bot.send_video(update.chat.id, f'{ttid}.mp4',)
+    await bot.send_video(update.chat.id, f'{ttid}.mp4',reply_markup=SU_BUTTONS)
     shutil.rmtree(dirs)
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
