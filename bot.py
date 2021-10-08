@@ -254,7 +254,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     resp = session.head(link, allow_redirects=True)
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
-    file = f"codexbotz{ttid}.mp4"
+    file = f"{ttid}.mp4"
     cap = "thanks"
     await bot.send_video(update.chat.id, video=file, caption=cap, reply_markup=SU_BUTTONS)
     await cb.message.delete()
@@ -283,7 +283,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     cmd = f'ffmpeg -i "{ttid}.mp4" -vn -ar 44100 -ac 2 -ab 192 -f mp3 "{ttid}.mp3"'
     await run_cmd(cmd)
-    await bot.send_audio(update.chat.id, f'codexbotz{ttid}.mp3',)
+    await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
     shutil.rmtree(dirs)
 bot.run()
     
