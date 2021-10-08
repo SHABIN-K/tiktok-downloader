@@ -56,8 +56,8 @@ DL_BUTTONS=[
 
 SU_BUTTONS = InlineKeyboardMarkup(
         [[
-        InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz'),
-        InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz')
+        InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz')],
+        [InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz')
         ]]
     )
 
@@ -282,8 +282,12 @@ async def _callbacks(bot, cb: CallbackQuery):
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
     cmd = f'ffmpeg -i "{ttid}.mp4" -vn -ar 44100 -ac 2 -ab 192 -f mp3 "{ttid}.mp3"'
+    file = f"{ttid}.mp3"
+    cap = "thanks"
     await run_cmd(cmd)
-    await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
+    await bot.send_audio(update.chat.id, audio=file, caption=cap, reply_markup=SU_BUTTONS)
+    await cb.message.delete()
+    os.remove(file)
     shutil.rmtree(dirs)
 bot.run()
     
