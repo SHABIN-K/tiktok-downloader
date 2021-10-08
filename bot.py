@@ -256,7 +256,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     open(f'{ttid}.mp4', 'wb').write(r.content)
     file = f"codexbotz{ttid}.mp4"
     cap = "thanks"
-    await bot.send_video(update.chat.id, video=file, caption=cap reply_markup=SU_BUTTONS)
+    await bot.send_video(update.chat.id, video=file, caption=cap, reply_markup=SU_BUTTONS)
     await cb.message.delete()
         os.remove(file)
     shutil.rmtree(dirs)
