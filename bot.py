@@ -53,12 +53,13 @@ DL_BUTTONS=[
     ],
 ]
 
-SU_BUTTONS=[
-    [
-        InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz')],
-        [InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz'),
-    ],
-]
+SU_BUTTONS = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz),
+        InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz)
+        ]]
+    )
+
 
 START_TEXT = """<b>Hi, {}</b>\n
 <b>I am a TikTok Downloader bot.</b>
@@ -153,7 +154,7 @@ Unsuccessful: <code>{unsuccessful}</code></b>"""
         await asyncio.sleep(8)
         await msg.delete()
 
-# Startn
+# Start
 @bot.on_message(filters.private & filters.command(["start"]))
 async def _start(bot, update):
     id = update.from_user.id
@@ -236,7 +237,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.delete()
+    await cb.message.edit("pleasewait")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
