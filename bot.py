@@ -279,20 +279,5 @@ async def _callbacks(bot, cb: CallbackQuery):
     await run_cmd(cmd)
     await bot.send_audio(update.chat.id, f'{ttid}.mp3',)
     shutil.rmtree(dirs)
-  elif cb.data == "help":
-    await bot.message.edit_text(
-      text=HELP_TEXT,
-      disable_web_page_preview=True,
-      reply_markup=HELP_BUTTONS
-      )
-  elif cb.data == "about":
-    await bot.message.edit_text(
-      text=ABOUT_TEXT,
-      disable_web_page_preview=True,
-      reply_markup=ABOUT_BUTTONS
-      )
-  elif cb.data == "close":
-    await bot.message.delete()
-    
 bot.run()
     
