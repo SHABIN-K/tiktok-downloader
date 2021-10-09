@@ -247,6 +247,8 @@ async def _tiktok(bot, update):
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
+    if not 'tiktok.com' in resp.url:
+        return
     await update.reply_photo(
         photo = url,
         caption = '**choose your options**',
