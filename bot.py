@@ -289,5 +289,8 @@ async def _callbacks(bot, cb: CallbackQuery):
     await cb.message.delete()
     os.remove(file)
     shutil.rmtree(dirs)
+  elif cb.data == 'close':
+    await bot.message.delete()
+    
 bot.run()
     
