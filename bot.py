@@ -226,9 +226,10 @@ async def _tiktok(bot, update):
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
+    text = "**choose your options**"
     if not 'tiktok.com' in resp.url:
         return
-    await update.reply('**choose your options**', True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+    await update.reply_photo("https://telegra.ph/file/0ba1a9f2ed9069ba25d71.jpg", caption=text, True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
 @bot.on_callback_query()
@@ -238,7 +239,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.edit("**pleasewait...**")
+    await cb.message.edit("`pleasewait...`")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
@@ -265,7 +266,7 @@ async def _callbacks(bot, cb: CallbackQuery):
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.edit("**pleasewait....**")
+    await cb.message.edit("`pleasewait....`")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
