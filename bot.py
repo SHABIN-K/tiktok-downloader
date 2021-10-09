@@ -226,7 +226,7 @@ async def help_handler(bot, update):
         )
 
 # Downloader for tiktok
-@bot.on_message(filters.regex(pattern=url_regex) & filters.private)
+@bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
 async def _tiktok(bot, update):
     if Config.UPDATES_CHANNEL != "None":
         try:
