@@ -1,5 +1,4 @@
-import pyrogram
-import logging
+import pyrogram, re
 import json, requests, os, shlex, asyncio, uuid, shutil
 from typing import Tuple
 from pyrogram import Client, filters
@@ -11,13 +10,23 @@ from pyrogram.errors import UserBannedInChannel
 from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
 from database.sql import add_user, query_msg
 from database.support import users_info
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, InputMediaVideo, InputMediaAudio
 
 # Configs
 API_HASH = os.environ['API_HASH']
 APP_ID = int(os.environ['APP_ID'])
 BOT_TOKEN = os.environ['BOT_TOKEN']
 downloads = './downloads/{}/'
+url_regex = '''(?x)
+https?://
+(?:
+   (?:www|m)\.
+   (?:tiktok.com)\/
+   (?:v|embed|trending)
+   (?:\/)?
+   (?:\?shareId=)?
+)
+(?P<id>[\da-z]+)'''
 
 #DL_BUTTONS
 
@@ -55,10 +64,14 @@ DL_BUTTONS=[
 ]
 
 SU_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz')],
-        [InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz')
-        ]]
+        [
+            [
+                InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz')
+            ],
+            [
+                InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/CodeXBotz')
+            ]
+        ]
     )
 
 
@@ -169,16 +182,25 @@ async def _start(bot, update):
     )  
 
 @bot.on_message(filters.private & filters.command(["about"]))
-async def about_handler(bot, message):
-    await message.reply_text(
-        text=ABOUT_TEXT,
-        parse_mode="markdown",
-        disable_web_page_preview=True,
-        reply_markup=ABOUT_BUTTONS
-    )
+@bot.on_callback_query(filters.regex('about'))
+async def about_handler(bot, update):
+    if isinstance(update, Message):
+        await update.reply_text(
+            text=ABOUT_TEXT,
+            parse_mode="markdown",
+            disable_web_page_preview=True,
+            reply_markup=ABOUT_BUTTONS
+        )
+    else:
+        await update.edit_message_text(
+            text=ABOUT_TEXT,
+            parse_mode="markdown",
+            disable_web_page_preview=True,
+            reply_markup=ABOUT_BUTTONS
+        )
 
 @bot.on_message(filters.private & filters.command(["xdevs"]))
-async def about_handler(bot, message):
+async def about_hand(bot, message):
     await message.reply_text(
         text="broadcast = /xat\nusers = /us",
         parse_mode="markdown",
@@ -186,16 +208,25 @@ async def about_handler(bot, message):
     )
     
 @bot.on_message(filters.command('help') & filters.private & ~filters.edited)
-async def help_handler(bot, message):
-    await message.reply_text(
-        text=HELP_TEXT,
-        parse_mode="markdown",
-        disable_web_page_preview=True,
-        reply_markup=HELP_BUTTONS
-    )
+@bot.on_callback_query(filters.regex('help'))
+async def help_handler(bot, update):
+    if isinstance(update, Message):
+        await update.reply(
+            text=HELP_TEXT,
+            parse_mode="markdown",
+            disable_web_page_preview=True,
+            reply_markup=HELP_BUTTONS
+        )
+    else:
+        await update.edit_message_text(
+            text=HELP_TEXT,
+            parse_mode="markdown",
+            disable_web_page_preview=True,
+            reply_markup=HELP_BUTTONS
+        )
 
 # Downloader for tiktok
-@bot.on_message(filters.regex(pattern='.*http.*') & filters.private)
+@bot.on_message(filters.regex(pattern=url_regex) & filters.private)
 async def _tiktok(bot, update):
     if Config.UPDATES_CHANNEL != "None":
         try:
@@ -226,11 +257,12 @@ async def _tiktok(bot, update):
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
-    text = "**choose your options**"
-    if not 'tiktok.com' in resp.url:
-        return
-    await update.reply_text(text,
-      reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+    await update.reply_photo(
+        photo = url,
+        caption = '**choose your options**',
+        quote = True,
+        reply_markup=InlineKeyboardMarkup(DL_BUTTONS)
+    )
 
 # _callbacks
 @bot.on_callback_query()
@@ -240,7 +272,9 @@ async def _callbacks(bot, cb: CallbackQuery):
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.edit("`pleasewait...`")
+    if not update:
+        return await cb.edit_message_caption("<i>Sorry, I Can't find the URL</i>")
+    await cb.edit_message_caption("<i>Please Wait, Let me Download and Upload your Video..</i>")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
@@ -252,22 +286,30 @@ async def _callbacks(bot, cb: CallbackQuery):
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
     rs = json.loads(result)
+    if not rs["status"]:
+        return await cb.edit_message_caption("<i>Sorry I Can't Download this Video..</i>")
+        
     link = rs['result']['nowm']
     resp = session.head(link, allow_redirects=True)
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
-    file = f"{ttid}.mp4"
-    cap = "thanks"
-    await bot.send_video(update.chat.id, video=file, caption=cap, reply_markup=SU_BUTTONS)
-    await cb.message.delete()
-    os.remove(file)
+    await cb.edit_message_media(
+        media = InputMediaVideo(
+            media = f'{ttid}.mp4',
+            caption = f"<b>Author: {rs['author']}\nURL: {url}</b>\n\n<i>Thanks for using @TikTokDL_Xbot</i>"
+        ),
+        reply_markup=SU_BUTTONS
+    )
     shutil.rmtree(dirs)
+    
   elif cb.data == 'audio':
     dirs = downloads.format(uuid.uuid4().hex)
     os.makedirs(dirs)
     cbb = cb
     update = cbb.message.reply_to_message
-    await cb.message.edit("`pleasewait....`")
+    if not update:
+        return await cb.edit_message_caption("<i>Sorry, I Can't find the URL</i>")
+    await cb.edit_message_caption("<i>Please Wait, Let me Download and Upload your Video..</i>")
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
@@ -279,32 +321,22 @@ async def _callbacks(bot, cb: CallbackQuery):
     r = requests.get('https://api.reiyuura.me/api/dl/tiktok?url='+tt)
     result = r.text
     rs = json.loads(result)
+    if not rs["status"]:
+        return await cb.edit_message_caption("<i>Sorry I Can't Download this Video..</i>")
     link = rs['result']['wm']
     resp = session.head(link, allow_redirects=True)
     r = requests.get(resp.url, allow_redirects=True)
     open(f'{ttid}.mp4', 'wb').write(r.content)
     cmd = f'ffmpeg -i "{ttid}.mp4" -vn -ar 44100 -ac 2 -ab 192 -f mp3 "{ttid}.mp3"'
-    file = f"{ttid}.mp3"
-    cap = "thanks"
     await run_cmd(cmd)
-    await bot.send_audio(update.chat.id, audio=file, caption=cap, reply_markup=SU_BUTTONS)
-    await cb.message.delete()
-    os.remove(file)
+    await cb.edit_message_media(
+        media = InputMediaAudio(
+            media = f'{ttid}.mp3',
+            caption = f"<b>Author: {rs['author']}\nURL: {url}</b>\n\n<i>Thanks for using @TikTokDL_Xbot</i>",
+            performer = rs['author']
+        ),
+        reply_markup=SU_BUTTONS
+    )
     shutil.rmtree(dirs)
-  elif cb.data == "help":
-    await cb.message.edit_text(
-      text=HELP_TEXT,
-      disable_web_page_preview=True,
-      reply_markup=HELP_BUTTONS
-      )
-  elif cb.data == "about":
-    await cb.message.edit_text(
-      text=ABOUT_TEXT,
-      disable_web_page_preview=True,
-      reply_markup=ABOUT_BUTTONS
-      )  
-  elif cb.data == 'close':
-    await cb.message.delete()
-    
+
 bot.run()
-    
