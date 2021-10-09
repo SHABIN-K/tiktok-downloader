@@ -229,7 +229,8 @@ async def _tiktok(bot, update):
     text = "**choose your options**"
     if not 'tiktok.com' in resp.url:
         return
-    await update.reply_photo("https://telegra.ph/file/0ba1a9f2ed9069ba25d71.jpg", caption=text, True, reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
+    await update.send_animation("mp4.mp4", caption=text,
+      reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
 @bot.on_callback_query()
