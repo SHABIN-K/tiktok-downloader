@@ -226,10 +226,10 @@ async def _tiktok(bot, update):
     url = update.text
     session = requests.Session()
     resp = session.head(url, allow_redirects=True)
-    text = "**choose your options**"
+    test = "**choose your options**"
     if not 'tiktok.com' in resp.url:
         return
-    await update.reply_text(text,
+    await update.send_animation("mp4.mp4", caption=test,
       reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
