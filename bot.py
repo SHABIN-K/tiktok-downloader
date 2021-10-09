@@ -229,7 +229,7 @@ async def _tiktok(bot, update):
     test = "**choose your options**"
     if not 'tiktok.com' in resp.url:
         return
-    await update.send_animation("mp4.mp4", caption=test,
+    await update.reply_animation("mp4.mp4", caption=test,
       reply_markup=InlineKeyboardMarkup(DL_BUTTONS))
 
 # _callbacks
