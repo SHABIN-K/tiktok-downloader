@@ -55,7 +55,7 @@ DL_BUTTONS=[
 SU_BUTTONS = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton('Code 𝕏 Botz', url='https://t.me/CodeXBotz')
+                InlineKeyboardButton('Code 𝕏 Botz', login_url='https://t.me/CodeXBotz')
             ],
             [
                 InlineKeyboardButton('Rate this Bot ⭐️', url='https://t.me/tlgrmcbot?start=tiktokdl_xbot-review')
