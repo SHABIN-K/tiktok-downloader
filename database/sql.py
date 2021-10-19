@@ -42,6 +42,11 @@ async def add_user(id, user_name):
         else:
             pass
 
+async def full_userbase():
+    users = SESSION.query(Broadcast).all()
+    SESSION.close()
+    return users
+
 async def query_msg():
     try:
         query = SESSION.query(Broadcast.id).order_by(Broadcast.id)
