@@ -103,8 +103,8 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
   )
 
  
-@bot.on_message(filters.command('users') & filters.private & filters.user(AUTH_USERS))
-async def get_users(client: Bot, message: Message):
+@bot.on_message(filters.command('us') & filters.private)
+async def get_users(client: bot, message: Message):
     msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
     users = await full_userbase()
     await msg.edit(f"{len(users)} users are using this bot")
