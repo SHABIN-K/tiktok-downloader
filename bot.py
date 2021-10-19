@@ -103,7 +103,7 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
   )
 
  
-@Bot.on_message(filters.command('users') & filters.private & filters.user(AUTH_USERS))
+@bot.on_message(filters.command('users') & filters.private & filters.user(AUTH_USERS))
 async def get_users(client: Bot, message: Message):
     msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
     users = await full_userbase()
