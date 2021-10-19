@@ -8,8 +8,7 @@ from configs import Config
 from pyrogram.errors import UserNotParticipant
 from pyrogram.errors import UserBannedInChannel
 from pyrogram.errors import UsernameInvalid, UsernameNotOccupied
-from database.sql import add_user, query_msg
-from database.support import users_info
+from database.sql import add_user, query_msg, full_userbase
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, InputMediaVideo, InputMediaAudio
 
 # Configs
@@ -84,7 +83,6 @@ ABOUT_TEXT = """**ABOUT ME**
 """
 FORCE_TEXT ="""You need to join @CodeXBotz in order to use this bot.\nSo please join channel and enjoy bot\n\n**Press the Following Button to join Now 👇**
 """
-USERS_LIST = "<b>⭕️Total:</b>\n\n⭕️Subscribers - {}\n⭕️Blocked- {}"
 WAIT_MSG = "<b>Processing ...</b>"
 REPLY_ERROR = "<code>Use this command as a replay to any telegram message with out any spaces.</code>"
 DOWN_MSG = "**downloading... 📥**"
@@ -103,15 +101,13 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
       process.returncode,
       process.pid,
   )
-  
-@bot.on_message(filters.private & filters.command(["us"]))
-async def subscribers_count(bot, m: Message):
-    msg = await m.reply_text(WAIT_MSG)
-    messages = await users_info(bot)
-    active = messages[0]
-    blocked = messages[1]
-    await m.delete()
-    await msg.edit(USERS_LIST.format(active, blocked))
+
+ 
+@Bot.on_message(filters.command('users') & filters.private & filters.user(AUTH_USERS))
+async def get_users(client: Bot, message: Message):
+    msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
+    users = await full_userbase()
+    await msg.edit(f"{len(users)} users are using this bot")
 
 
 @bot.on_message(filters.private & filters.command(["xat"]))
