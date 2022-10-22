@@ -3,7 +3,7 @@
   "description": "Telegram Bot to Download Tiktok video",
   "keywords": ["telegram", "message", "bot", "open", "source"],
   "logo": "https://telegra.ph/file/951b431939206a7193521.jpg",
-  "website": "https://github.com/ERICDANIYEL/broadcastbot",
+  "website": "https://github.com/SHABIN-K/tiktokdl",
   "repository": "https://github.com/SHABIN-K/tiktokdl",
   "env": {
         "APP_ID": {"description": "Get this value from https://my.telegram.org", "required": true},
