@@ -103,14 +103,14 @@ async def run_cmd(cmd: str) -> Tuple[str, str, int, int]:
   )
 
  
-@bot.on_message(filters.command('us') & filters.private)
+
 async def get_users(client: bot, message: Message):
     msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
     users = await full_userbase()
     await msg.edit(f"{len(users)} users are using this bot")
 
 
-@bot.on_message(filters.private & filters.command(["xat"]))
+
 async def send_text(bot, update):
     if update.reply_to_message:
         query = await query_msg()
@@ -185,7 +185,7 @@ async def about_handler(bot, update):
             reply_markup=ABOUT_BUTTONS
         )
 
-@bot.on_message(filters.private & filters.command(["xdevs"]))
+
 async def about_hand(bot, message):
     await message.reply_text(
         text="broadcast = /xat\nusers = /us",
